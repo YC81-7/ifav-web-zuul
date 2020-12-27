@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public class WeatherFuture {
 
-    @Autowired
+    @Autowired(required = false)
     private WeatherRestService weatherRestService;
 
     @Async

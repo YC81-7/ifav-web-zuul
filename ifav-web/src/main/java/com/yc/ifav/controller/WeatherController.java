@@ -7,13 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/weather")
 public class WeatherController {
 
-    @Autowired
+    @Resource
     private WetherClient weatherFegin;
 
 

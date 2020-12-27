@@ -1,18 +1,23 @@
 package com.yc.ifav.controller;
 
+
 import com.yc.ifav.zuul.MyFavClient;
 import feign.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/myfav")
 public class MyFavController {
 
-    @Autowired
+    @Resource
     private MyFavClient myFavFeign;
 
 
