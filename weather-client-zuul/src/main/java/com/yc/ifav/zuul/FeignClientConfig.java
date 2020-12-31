@@ -9,11 +9,11 @@ import org.springframework.context.annotation.Configuration;
 public class FeignClientConfig {
 
 
-    //加入安全配置
-    @Bean
-    public BasicAuthRequestInterceptor getBasicAuthRequestInterceptor() {
-        return new BasicAuthRequestInterceptor("admin", "a");
-    }
+//    //加入安全配置
+//    @Bean
+//    public BasicAuthRequestInterceptor getBasicAuthRequestInterceptor() {
+//        return new BasicAuthRequestInterceptor("admin", "a");
+//    }
 
     @Bean
     Logger.Level feignLoggerLevel() {

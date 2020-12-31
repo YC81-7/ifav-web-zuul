@@ -4,7 +4,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://admin:a@172.18.50.169:7301/eureka
+      defaultZone: http://admin:a@localhost:7301/eureka
   instance:
     preferIpAddress: true
     instance-id: ifav-provider-reg_1

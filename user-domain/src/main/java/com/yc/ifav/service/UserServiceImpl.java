@@ -18,7 +18,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void register(User user) {
-
+        user.setUAvator("http://120.26.177.155/group1/M00/00/00/eBqxm1_r2E2AB1siAARlMEELfMc680.png");
         userMapper.insert(user);
     }
 
@@ -50,6 +50,22 @@ public class UserServiceImpl implements UserService{
         //结果只能返回一条数据否则会抛出异常
         return userMapper.selectOne(user02);
 
+    }
+
+    /**
+     * 修改头像
+     * @param user
+     * @return
+     */
+    @Override
+    public int updateAvator(User user) {
+        return userMapper.updateByPrimaryKey(user);
+    }
+
+
+    @Override
+    public User selectById(User user) {
+        return userMapper.selectByPrimaryKey(user);
     }
 
 }

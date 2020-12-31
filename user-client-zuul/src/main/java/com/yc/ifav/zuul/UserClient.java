@@ -1,6 +1,7 @@
 package com.yc.ifav.zuul;
 
 
+import com.yc.ifav.config.MultipartSupportConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 // feign客户端要访问的是  zuul服务 BASE-MICROSERVICE-ZUUL-GATEWAY
 @FeignClient(name="BASE-IFAV-ZUUL-GATEWAY",
-        configuration = FeignClientConfig.class
+        configuration = {MultipartSupportConfig.class,FeignClientConfig.class}
 )
 public interface UserClient {
 
@@ -25,25 +26,26 @@ public interface UserClient {
 //    String findAll(@RequestParam("muid") int muid);
 
 
-    @RequestMapping(method = RequestMethod.POST, value = "/yc-api/user-proxy/user/login",
+    @RequestMapping(method = RequestMethod.POST, value = "/yc-api/reg-proxy/user/login",
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     String login(@RequestParam("uName") String uName,@RequestParam("uPwd") String uPwd, @RequestParam("uEmail") String uEmail ) ;
 
-    @RequestMapping(method = RequestMethod.GET, value = "/yc-api/user-proxy/user/vcode",
+    @RequestMapping(method = RequestMethod.GET, value = "/yc-api/reg-proxy/user/vcode",
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     void sendVcode(@RequestParam("uEmail") String uEmail) ;
 
-    @RequestMapping(method = RequestMethod.POST, value = "/yc-api/user-proxy/user/uploadPic",
-            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
-            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void uploadPic(@RequestParam("multipartFile") MultipartFile multipartFile, @RequestParam("request") HttpServletRequest request, @RequestParam("response") HttpServletResponse response) ;
+    @RequestMapping(method = RequestMethod.POST, value = "/yc-api/reg-proxy/user/uploadPic",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    String uploadPic(@RequestPart("multipartFile") MultipartFile multipartFile,@RequestParam("uid") int uid, @RequestParam("request") HttpServletRequest request, @RequestParam("response") HttpServletResponse response) ;
 
-    @RequestMapping(method = RequestMethod.POST, value = "/yc-api/user-proxy/user/register",
+    @RequestMapping(method = RequestMethod.POST, value = "/yc-api/reg-proxy/user/register",
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 //    @PostMapping("/user/register")
     String  register(@RequestParam("uName")String uName,@RequestParam("uPwd") String uPwd, @RequestParam("vkey") String vkey);
 
+    @RequestMapping(method = RequestMethod.POST,value = "/yc-api/reg-proxy/user/selectById")
+    String selectById(@RequestParam("uid") int uid );
 }

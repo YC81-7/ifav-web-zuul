@@ -1,7 +1,9 @@
 package com.yc.ifav.controller;
 
-import com.yc.ifav.zuul.UserClient;
+import com.yc.ifav.future.UserFuture;
 import feign.Param;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
@@ -11,43 +13,65 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.CompletableFuture;
-
+@Api(value = "iFav接口", tags = "用户接口")
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
     @Resource
-    private UserClient userFeign;
+    private UserFuture userFuture;
 
 
+    @ApiOperation(value="上传头像",  httpMethod = "POST",  produces = "application/json")//必须要
+    @RequestMapping(value = "/uploadPic", method = RequestMethod.POST)
+    public CompletableFuture<String> uploadPic(@RequestPart(value="multipartFile",required=false) MultipartFile multipartFile,HttpServletRequest request,HttpServletResponse response) {
+        int uid= Integer.parseInt(request.getSession().getAttribute("userid").toString()) ;
+        CompletableFuture<String> res=userFuture.uploadPic(multipartFile,uid,request,response);
+        return res;
+    }
+
+
+
+
+    @ApiOperation(value="查询用户信息",  httpMethod = "POST",  produces = "application/json")//必须要
+    @PostMapping("selectById")
+    public CompletableFuture<String> selectById(@RequestParam("uid")int uid){
+        return userFuture.selectById(uid);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    @ApiOperation(value="用户登录",  httpMethod = "POST",  produces = "application/json")//必须要
     @Async
     @PostMapping("/login")
-    public CompletableFuture<String> login(@Param("uName")String uName, @Param("uPwd")String uPwd, @Param("uEmail") String uEmail ) {
+    public CompletableFuture<String> login(@RequestParam("uName")String uName, @RequestParam("uPwd")String uPwd, @RequestParam("uEmail") String uEmail ) {
+        CompletableFuture<String> str=userFuture.login(uName,uPwd,uEmail);
 
-        return CompletableFuture.supplyAsync(() -> {
+        return str;
 
-           return userFeign.login(uName,uPwd,uEmail);
-        });
     }
 
-
+    @ApiOperation(value="邮箱验证",  httpMethod = "GET",  produces = "application/json")//必须要
     @RequestMapping("/vcode")
-    public void sendVcode(@Param("uEmail") String uEmail) {
-        userFeign.sendVcode(uEmail);
+    public void sendVcode(@RequestParam("uEmail") String uEmail) {
+        userFuture.sendVcode(uEmail);
     }
 
 
-    @RequestMapping(value = "/uploadPic", method = RequestMethod.POST)
-    public void uploadPic(MultipartFile multipartFile, HttpServletRequest request, HttpServletResponse response) {
-        userFeign.uploadPic(multipartFile,request,response);
-    }
 
-
+    @ApiOperation(value="用户注册",  httpMethod = "POST",  produces = "application/json")//必须要
     @PostMapping("/register")
     public CompletableFuture<String> register(@RequestParam("uName")String uName,@RequestParam("uPwd") String uPwd, @RequestParam("vkey") String vkey){
-        return CompletableFuture.supplyAsync(() -> {
-            return userFeign.register(uName, uPwd, vkey);
-        });
+            return userFuture.register(uName, uPwd, vkey);
     }
 
 }

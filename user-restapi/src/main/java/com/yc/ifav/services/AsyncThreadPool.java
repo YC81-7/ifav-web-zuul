@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /*
-异步线程池
+fastdfs异步线程池
  */
 public class AsyncThreadPool {
     private static Logger logger = LoggerFactory.getLogger(AsyncThreadPool.class);

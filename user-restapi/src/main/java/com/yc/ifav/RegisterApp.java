@@ -8,12 +8,15 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.context.annotation.Import;
 import tk.mybatis.spring.annotation.MapperScan;
 
 
+//该启动类需要扫描到domain的@Mapper
 @EnableEurekaClient
 @SpringBootApplication
+
 //就可以拥有带有连接池的FastDFS Java客户端了
 @Import(FdfsClientConfig.class)
 public class RegisterApp {

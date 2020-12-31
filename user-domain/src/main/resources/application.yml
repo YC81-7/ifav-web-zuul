@@ -27,7 +27,7 @@ logging:
 eureka:
   client:
     service-url:
-      defaultZone: http://admin:a@172.18.50.169:7301/eureka
+      defaultZone: http://admin:a@localhost:7301/eureka
   instance:
     instance-id: ifav-provider-tag_1   #实例名
     lease-expiration-duration-in-seconds: 90  #如果现在超过了5s的时间间隔( default: 90 s )

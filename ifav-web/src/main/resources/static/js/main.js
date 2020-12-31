@@ -30,3 +30,4 @@
 			x.style.height="30px";
 			x.style.width="30px";
 		}
+

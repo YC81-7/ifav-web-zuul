@@ -9,4 +9,8 @@ public interface UserService {
     public  User login(User user);
 
     public User emreg(User user);
+
+    public int updateAvator(User user);
+
+    public User selectById(User user);
 }

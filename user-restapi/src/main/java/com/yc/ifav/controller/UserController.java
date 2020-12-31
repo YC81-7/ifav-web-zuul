@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -99,7 +100,7 @@ public class UserController {
 
     @Async
     @PostMapping("/register")
-    public CompletableFuture<String>  register(String uName,String uPwd, @Param("vkey") String vkey) {
+    public CompletableFuture<String>  register(String uName,String uPwd, @RequestParam("vkey") String vkey) {
 
         return CompletableFuture.supplyAsync(() -> {
             User user=new User();
@@ -115,7 +116,6 @@ public class UserController {
                 //return mav;
             }else{
                 user.setUEmail(ema);
-                user.setUAvator(uAvator);
                 if(userService.emreg(user)==null){
                     userService.register(user);
                     map.put("code", 1);
@@ -133,7 +133,7 @@ public class UserController {
 
     //发送验证码
     @GetMapping("vcode")
-    public void SendVcode(@Param("email") String uEmail) {
+    public void SendVcode(@RequestParam("uEmail") String uEmail) {
         vcode=mailBiz.getCheckCode();
         ema=uEmail;
         System.out.println("即将发送的验证码："+vcode+"to"+uEmail+"....................");
@@ -159,11 +159,11 @@ public class UserController {
      *
      * @return
      */
-    @RequestMapping(value = "/uploadPic", method = RequestMethod.POST)
-    public void uploadPic( MultipartFile multipartFile, HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/uploadPic", method = RequestMethod.POST,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String uploadPic(@RequestPart("multipartFile") MultipartFile multipartFile,@RequestParam("uid") int uid,  HttpServletRequest request, HttpServletResponse response) {
         try {
             //为空
-            System.out.println(multipartFile+",,,,,,,,,,,,,,,,,,,,,,,");
+            System.out.println(multipartFile+",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
             //上传文件,为了获取路径
             String filename = fastefsClient.uplodFile(multipartFile);
             //使用了异步线程池
@@ -178,27 +178,73 @@ public class UserController {
                     }
                 }
             });
-            BufferedImage image = ImageIO.read(multipartFile.getInputStream());
-            Map<String, Object> data = new HashMap<String, Object>();
-            data.put("pathInfo", pathHead + filename);
-            data.put("width", image.getWidth());
-            data.put("height", image.getHeight());
+//            BufferedImage image = ImageIO.read(multipartFile.getInputStream());
+//            Map<String, Object> data = new HashMap<String, Object>();
+//            data.put("pathInfo", pathHead + filename);
+//            data.put("width", image.getWidth());
+//            data.put("height", image.getHeight());
+//
+//            ObjectMapper mapper = new ObjectMapper();
+//            String ret = mapper.writeValueAsString(data);
+//
+//            response.setContentType("text/html;charset=utf8");
+//            response.getOutputStream().write(ret.getBytes());
+//            response.flushBuffer();
 
-            ObjectMapper mapper = new ObjectMapper();
-            String ret = mapper.writeValueAsString(data);
 
-            response.setContentType("text/html;charset=utf8");
-            response.getOutputStream().write(ret.getBytes());
-            response.flushBuffer();
+
+
+
+
+            //头像修改
+            User user=new User();
+            user.setUId(uid);
+            User user01=userService.selectById(user);
+
+            user01.setUAvator(uAvator);
+            int res= userService.updateAvator(user01);
+            Map map=new HashMap();
+            if(res==1){
+                map.put("user",user01);
+                map.put("code", 1);
+                map.put("data", "头像修改成功.........");
+            }else{
+                map.put("code",0);
+                map.put("data", "头像修改失败.........");
+            }
+
+
+            System.out.println(map+",,,,,,,,,,,");
+            return new Gson().toJson(map);
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
 
 
+    @Async
+    @PostMapping("/selectById")
+    public CompletableFuture<String> selectById(int uid ) {
 
+        return CompletableFuture.supplyAsync(() -> {
+            User user=new User();
+            user.setUId(uid);
+            User user01=userService.selectById(user);
+            Map map=new HashMap();
+            if(user01!=null){
+                map.put("data",user01);
+                map.put("msg","根据id查询成功！！！！");
+            }else{
+                map.put("msg","根据id查询失败！！！！");
+            }
+
+            return new Gson().toJson(map);
+        });
+    }
 
 
 }
